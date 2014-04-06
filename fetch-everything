@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+ROOT_DIR=${1:-.};
+GIT_REPOS=$(find $ROOT_DIR -name .git -type d -exec dirname {} \;);
+
+for dir in $GIT_REPOS; do
+    echo "Processing $dir ...";
+    ( # Run in a sub-shell so we don't have to worry about env vars or cwd
+      cd $dir;
+      REMOTES=$(git remote -v);
+      if [ -n "$REMOTES" ]; then
+          git fetch -a -p;
+      fi;
+    )
+done;
+
+echo "Done.";
